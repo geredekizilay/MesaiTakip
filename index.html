@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro Personel Takip</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3135/3135715.png">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+    <div id="authContainer" class="auth-wrapper">
+        <div class="auth-card">
+            <h2 id="authTitle">Giriş Yap</h2>
+            <input type="email" id="email" placeholder="E-Posta Adresi" required>
+            <input type="password" id="password" placeholder="Şifre" required>
+            <button onclick="handleAuth()" id="authBtn">Giriş Yap</button>
+            <p onclick="toggleAuthMode()" id="authToggle">Hesabın yok mu? Kayıt Ol</p>
+            <p id="authError" class="error-msg"></p>
+        </div>
+    </div>
+
+    <div id="appContainer" class="app-container hidden">
+        <header>
+            <div class="header-left">
+                <button id="backBtn" class="icon-btn hidden"><i class="fa-solid fa-arrow-left"></i></button>
+                <h1 id="pageTitle">Personel Asistanı</h1>
+            </div>
+            <div class="header-right">
+                <button id="themeToggle" class="icon-btn"><i class="fa-solid fa-moon"></i></button>
+                <button onclick="logout()" class="icon-btn logout-btn"><i
+                        class="fa-solid fa-right-from-bracket"></i></button>
+            </div>
+        </header>
+
+        <main id="mainMenu" class="grid-menu">
+            <div class="card menu-mesai" onclick="openMode('mesai')">
+                <i class="fa-solid fa-clock"></i>
+                <span>Mesai Takip</span>
+            </div>
+            <div class="card menu-yillik" onclick="openMode('yillik-izin')">
+                <i class="fa-solid fa-plane-departure"></i>
+                <span>Yıllık İzin</span>
+            </div>
+            <div class="card menu-izin" onclick="openMode('izin')">
+                <i class="fa-solid fa-file-medical"></i>
+                <span>Genel İzin</span>
+            </div>
+            <div class="card menu-vardiya" onclick="openMode('vardiya')">
+                <i class="fa-solid fa-rotate"></i>
+                <span>Vardiya Takip</span>
+            </div>
+        </main>
+
+        <section id="detailSection" class="hidden">
+            <div id="infoBanner" class="info-box hidden">
+                <span id="infoText"></span>
+            </div>
+
+            <div class="calendar-wrapper">
+                <div class="calendar-header">
+                    <button class="nav-btn" id="prevMonth"><i class="fa-solid fa-chevron-left"></i></button>
+                    <h2 id="currentMonthYear"></h2>
+                    <button class="nav-btn" id="nextMonth"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+                <div class="calendar-grid-header">
+                    <div>Pt</div>
+                    <div>Sa</div>
+                    <div>Ça</div>
+                    <div>Pe</div>
+                    <div>Cu</div>
+                    <div>Ct</div>
+                    <div>Pz</div>
+                </div>
+                <div id="calendarDays" class="calendar-days"></div>
+            </div>
+
+            <div class="list-wrapper">
+                <h3>Kayıt Geçmişi</h3>
+                <div class="filter-area">
+                    <input type="text" id="searchInput" placeholder="Açıklama veya tarih ara..." onkeyup="filterList()">
+                </div>
+                <ul id="actionList" class="action-list"></ul>
+            </div>
+        </section>
+
+        <div class="reklam">
+            <p style="width: 100%; margin: auto; text-align: center; color: gray;">created by <b>ea </b></p>
+        </div>
+
+    </div>
+
+    <div id="iosInstallBtn" class="ios-install-btn hidden" onclick="showIosInstructions()">
+        <i class="fa-solid fa-download"></i>
+        <span>Ana Ekrana Ekle</span>
+    </div>
+
+    <div id="iosInstallModal" class="modal-overlay hidden">
+        <div class="modal-content" style="text-align: center;">
+            <div class="modal-header" style="justify-content: flex-end;">
+                <button onclick="closeIosModal()" class="close-modal-btn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <i class="fa-brands fa-apple" style="font-size: 3rem; color: var(--text-main); margin-bottom: 15px;"></i>
+            <h3 style="margin-bottom: 10px;">Ana Ekrana Ekle</h3>
+            <p style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 20px;">
+                Bu uygulamayı uygulama gibi kullanmak için:
+            </p>
+            <div class="ios-steps"
+                style="text-align: left; background: var(--bg-body); padding: 15px; border-radius: 10px;">
+                <p style="margin-bottom: 10px;">1. Aşağıdaki <i class="fa-solid fa-arrow-up-from-bracket"></i>
+                    <b>Paylaş</b> butonuna bas.</p>
+                <p>2. Açılan menüden <b>"Ana Ekrana Ekle"</b> seçeneğini seç.</p>
+            </div>
+            <div style="margin-top: 20px; font-size: 0.8rem; color: var(--text-light);">
+                (Safari tarayıcısı gereklidir)
+            </div>
+        </div>
+    </div>
+
+    <div id="entryModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Kayıt Ekle</h3>
+                <button onclick="closeModal()" class="close-modal-btn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="modal-body">
+                <p id="modalDateDisplay" class="modal-date"></p>
+
+                <div id="modalDynamicInputs"></div>
+
+                <textarea id="modalDesc" placeholder="Açıklama / Not (İsteğe Bağlı)"></textarea>
+            </div>
+
+            <div class="modal-footer">
+                <button id="modalDeleteBtn" class="btn-delete hidden" onclick="deleteCurrentRecord()">Sil</button>
+                <button class="btn-save" onclick="saveModalData()">Kaydet</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
